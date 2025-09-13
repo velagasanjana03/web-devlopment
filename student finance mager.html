@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login — Show Username & Password (Demo)</title>
+  <style>
+    body {
+      font-family: system-ui, Arial, sans-serif;
+      background: linear-gradient(180deg,#f0f4f8,#ffffff);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      margin:0;
+    }
+    .card {
+      width:100%; max-width:420px;
+      background:#fff; border-radius:12px; padding:20px;
+      box-shadow:0 8px 30px rgba(2,6,23,0.08);
+    }
+    h1 { margin:0 0 8px; font-size:20px; }
+    p.lead { margin:0 0 16px; color:#6b7280; font-size:14px; }
+    label { display:block; margin-top:10px; font-weight:600; color:#374151; }
+    input[type="text"], input[type="password"] {
+      width:100%; padding:10px 12px; margin-top:6px;
+      border:1px solid #e6e9ef; border-radius:8px; font-size:14px;
+    }
+    .row { display:flex; gap:8px; margin-top:14px; }
+    button {
+      flex:1; padding:10px 12px; border-radius:8px; border:0; cursor:pointer; font-weight:700;
+      background:#0ea5e9; color:white;
+    }
+    .btn-ghost { background:transparent; border:1px solid #e6e9ef; color:#374151; }
+    .result {
+      margin-top:16px; padding:12px; border-radius:8px; background:#f8fafc; color:#0f172a;
+      border:1px dashed #e6eef7;
+    }
+    .warn { margin-top:10px; color:#9ca3af; font-size:13px; }
+    .small { font-size:13px; color:#6b7280; margin-top:8px; }
+  </style>
+</head>
+<body>
+  <div class="card" role="main" aria-labelledby="title">
+    <h1 id="title">Demo Login</h1>
+    <p class="lead">Enter username and password. This demo will display what you typed (for learning).</p>
+    <form action="ai-thon4.html" method="get">
+    <form id="loginForm" onsubmit="return handleSubmit(event)" autocomplete="off">
+      <label for="username">Username</label>
+      <input id="username" name="username" type="text" placeholder="Enter username" required>
+
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" placeholder="Enter password" required>
+
+      <div class="row">
+        <button type="submit">Sign In</button>
+        <button type="button" class="btn-ghost" onclick="clearForm()">Clear</button>
+      </div>
+    </form>
+    </form>
+
+    <div id="output" class="result" style="display:none;" aria-live="polite"></div>
+    <div class="small">
+      <strong>Note:</strong> Passwords must never be kept or displayed as plain text in real systems. This is only a simple demo.
+    </div>
+  </div>
+
+  <script>
+    function handleSubmit(e){
+      e.preventDefault();
+      const u = document.getElementById('username').value.trim();
+      const p = document.getElementById('password').value;
+
+      if(!u || !p){
+        alert('Please enter both username and password.');
+        return false;
+      }
+
+      // Display the entered username & password (DEMO ONLY)
+      const out = document.getElementById('output');
+      // Show password masked option AND plain text as user requested:
+      out.innerHTML = `
+        <strong>Logged in (demo):</strong><br><br>
+        <div><strong>Username:</strong> <span>${escapeHtml(u)}</span></div>
+        <div style="margin-top:6px;"><strong>Password (plain):</strong> <span>${escapeHtml(p)}</span></div>
+        <div style="margin-top:6px;"><strong>Password (masked):</strong> <span>${'*'.repeat(p.length)}</span></div>
+      `;
+      out.style.display = 'block';
+
+      // Optionally "remember" a demo session locally (not secure)
+      sessionStorage.setItem('demo_user', u);
+
+      return false;
+    }
+
+    function clearForm(){
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+      document.getElementById('output').style.display = 'none';
+      sessionStorage.removeItem('demo_user');
+    }
+
+    // Simple HTML escaper to avoid injection when showing user input
+    function escapeHtml(unsafe) {
+      return unsafe
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    // If there's a remembered demo user, prefill username
+    const prev = sessionStorage.getItem('demo_user');
+    if(prev) document.getElementById('username').value = prev;
+  </script>
+</body>
+</html>
